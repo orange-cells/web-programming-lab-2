@@ -37,13 +37,14 @@ const loadPage = () => {
     addButton.addEventListener('click', newTask);
 }
 
-const taskTable = JSON.parse(localStorage.getItem('taskTable')) || [];
+let taskTable = JSON.parse(localStorage.getItem('taskTable')) || [];
 
 const newTask = () => {
     taskTable.push({
         taskText: document.getElementById('taskText').value,
         taskDate: document.getElementById('taskDate').value,
-        status: false
+        status: false,
+        taskId: Date.now()
     });
 
     localStorage.setItem('taskTable', JSON.stringify(taskTable));
@@ -65,13 +66,24 @@ const displayTaskTable = () => {
         const date = document.createElement('span');
         date.textContent = element.taskDate;
 
-        task.append(checkBox, text, date);
+        const delButton = document.createElement('button');
+        delButton.textContent = '-';
+        
+        delButton.addEventListener('click', () => removeTask(element.taskId));
+
+        task.append(checkBox, text, date, delButton);
         tasks.appendChild(task);
     });
 }
 
+const removeTask = (taskId) => {
+    taskTable = taskTable.filter(i => i.taskId !== taskId);
+    localStorage.setItem('taskTable', JSON.stringify(taskTable));
+    location.reload();
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     loadPage();
     displayTaskTable();
+   //localStorage.clear()
 });
