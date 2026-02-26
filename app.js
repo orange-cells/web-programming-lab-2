@@ -30,7 +30,7 @@ const loadPage = () => {
     taskTable.append(taskDate);
     taskTable.append(addButton);
 
-    // переделаем список задач в таблицу
+    // таблица со списком задач
     const todoTable = document.createElement('table');
     const thead = document.createElement('thead');
     const attrs = document.createElement('tr');
@@ -85,6 +85,22 @@ const displayTaskTable = () => {
 
         const text = document.createElement('td');
         text.textContent = element.taskText;
+
+        // добавим редактирование текста
+        text.addEventListener('dblclick', () => {
+            const newText = document.createElement('input');
+            newText.value = element.taskText;
+
+            text.textContent = '';
+            text.append(newText);
+            newText.focus();
+                        
+            newText.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') 
+                    element.taskText = newText.value;
+                    localStorage.setItem('taskTable', JSON.stringify(taskTable));
+            });
+        });
         
         const dueDate = document.createElement('td');
         dueDate.textContent = element.taskDate;
