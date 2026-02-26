@@ -30,9 +30,26 @@ const loadPage = () => {
     taskTable.append(taskDate);
     taskTable.append(addButton);
 
-    const ul = document.createElement('ul');
-    ul.setAttribute('id', 'taskList');
-    document.querySelector('body').append(ul);
+    // переделаем список задач в таблицу
+    const todoTable = document.createElement('table');
+    const thead = document.createElement('thead');
+    const attrs = document.createElement('tr');
+
+    const tableHeaders = ['check', 'task', 'due date', 'status', 'delete'];
+    tableHeaders.forEach(i => {
+        const th = document.createElement('th');
+        th.textContent = i;
+        attrs.appendChild(th);
+    });
+
+    thead.append(attrs);
+    todoTable.append(thead);
+
+    const tbody = document.createElement('tbody');
+    todoTable.setAttribute('id', 'todo-body');
+    todoTable.appendChild(tbody);
+
+    document.querySelector('body').append(todoTable);
 
     addButton.addEventListener('click', newTask);
 }
@@ -51,28 +68,41 @@ const newTask = () => {
 }
 
 const displayTaskTable = () => {
-    const tasks = document.getElementById('taskList');
+    const tasks = document.getElementById('todo-body');
 
     taskTable.forEach(element => {
-        const task = document.createElement('li');
-        
-        const checkBox = document.createElement('input');
-        // checkBox.setAttribute('id', )
-        checkBox.setAttribute('type', 'checkbox');
-        
-        const text = document.createElement('span');
+        const task = document.createElement('tr');
+
+        const status = document.createElement('td');
+        const check = document.createElement('input');
+        check.setAttribute('type', 'checkbox');
+        check.checked = element.status;
+        check.addEventListener('change', () => {
+            element.status = check.checked;
+            localStorage.setItem('taskTable', JSON.stringify(taskTable));
+        });
+        status.append(check)
+
+        const text = document.createElement('td');
         text.textContent = element.taskText;
+        
+        const dueDate = document.createElement('td');
+        dueDate.textContent = element.taskDate;
 
-        const date = document.createElement('span');
-        date.textContent = element.taskDate;
-
+        if (element.status) {
+            status.textContent = 'done';
+        } else {
+            status.textContent = 'not done';
+        }
+        
+        const del = document.createElement('td');
         const delButton = document.createElement('button');
         delButton.textContent = '-';
         
         delButton.addEventListener('click', () => removeTask(element.taskId));
 
-        task.append(checkBox, text, date, delButton);
-        tasks.appendChild(task);
+        task.append(check, text, dueDate, status, delButton);
+        tasks.append(task);
     });
 }
 
