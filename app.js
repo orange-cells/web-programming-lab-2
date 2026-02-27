@@ -1,4 +1,5 @@
 let sortDate = true;
+let currentStatus = 'all';
 
 const loadPage = () => {
     // заголовок
@@ -52,6 +53,26 @@ const loadPage = () => {
             });
         }
 
+        if (i.includes('status')) {
+            th.textContent = 'status ';
+            const statusSelect = document.createElement('select');
+
+            const statusList = ['all', 'done', 'not done'];
+            statusList.forEach(st => {
+                const option = document.createElement('option');
+                option.textContent = st;
+                statusSelect.appendChild(option);
+            });
+
+            statusSelect.value = currentStatus;
+            statusSelect.addEventListener('change', (e) => {
+                currentStatus = e.target.value;
+                displayTaskTable();
+            });
+
+            th.append(statusSelect); 
+        }
+
         attrs.appendChild(th);
     });
 
@@ -98,6 +119,11 @@ const displayTaskTable = () => {
         const dateB = b.taskDate ? new Date(b.taskDate) : new Date('9999-12-31');
         return sortDate ? dateA - dateB : dateB - dateA;
     });
+
+    if (currentStatus !== 'all') {
+        const ifDone = currentStatus === 'done';
+        tasksToDisplay = tasksToDisplay.filter(task => Boolean(task.status) === ifDone);
+    }
 
     tasksToDisplay.forEach(element => {
         const task = document.createElement('tr');
@@ -160,7 +186,7 @@ const removeTask = (taskId) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     // localStorage.clear()
-    // console.log(localStorage);
+    console.log(localStorage);
     loadPage();
     displayTaskTable();
 });
