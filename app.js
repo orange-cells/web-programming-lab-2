@@ -1,3 +1,5 @@
+let sortDate = true;
+
 const loadPage = () => {
     // заголовок
     const header = document.createElement('h1');
@@ -39,6 +41,16 @@ const loadPage = () => {
     tableHeaders.forEach(i => {
         const th = document.createElement('th');
         th.textContent = i;
+
+        if (i.includes('due date')) {
+            th.style.cursor = 'pointer';
+            th.addEventListener('click', () => {
+                sortDate = !sortDate;
+                localStorage.setItem('taskTable', JSON.stringify(taskTable));
+                displayTaskTable();
+            });
+        }
+
         attrs.appendChild(th);
     });
 
@@ -46,7 +58,7 @@ const loadPage = () => {
     todoTable.append(thead);
 
     const tbody = document.createElement('tbody');
-    todoTable.setAttribute('id', 'todo-body');
+    tbody.setAttribute('id', 'todo-body');
     todoTable.appendChild(tbody);
 
     document.querySelector('body').append(todoTable);
@@ -70,7 +82,18 @@ const newTask = () => {
 const displayTaskTable = () => {
     const tasks = document.getElementById('todo-body');
 
-    taskTable.forEach(element => {
+    while (tasks.firstChild) {
+        tasks.removeChild(tasks.firstChild);
+    }
+
+    let tasksToDisplay = [...taskTable];  // делаем копию
+    tasksToDisplay.sort((a, b) => {
+        const dateA = a.taskDate ? new Date(a.taskDate) : new Date('9999-12-31');
+        const dateB = b.taskDate ? new Date(b.taskDate) : new Date('9999-12-31');
+        return sortDate ? dateA - dateB : dateB - dateA;
+    });
+
+    tasksToDisplay.forEach(element => {
         const task = document.createElement('tr');
 
         const status = document.createElement('td');
@@ -80,13 +103,14 @@ const displayTaskTable = () => {
         check.addEventListener('change', () => {
             element.status = check.checked;
             localStorage.setItem('taskTable', JSON.stringify(taskTable));
+            displayTaskTable();
         });
         status.append(check)
 
         const text = document.createElement('td');
         text.textContent = element.taskText;
 
-        // добавим редактирование текста
+        // редактирование текста
         text.addEventListener('dblclick', () => {
             const newText = document.createElement('input');
             newText.value = element.taskText;
@@ -129,7 +153,8 @@ const removeTask = (taskId) => {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // localStorage.clear()
+    // console.log(localStorage);
     loadPage();
     displayTaskTable();
-   //localStorage.clear()
 });
