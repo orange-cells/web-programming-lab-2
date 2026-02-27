@@ -9,6 +9,7 @@ const loadPage = () => {
     // добавление задачи
     const addButton = document.createElement('button');
     addButton.textContent = '+';
+    addButton.setAttribute('type', 'submit');
 
     // поиск задач
     const search = document.createElement('input');
@@ -63,7 +64,11 @@ const loadPage = () => {
 
     document.querySelector('body').append(todoTable);
 
-    addButton.addEventListener('click', newTask);
+    taskTable.addEventListener('submit', (e) => {
+        e.preventDefault();
+        newTask();
+        taskTable.reset();
+    });
 }
 
 let taskTable = JSON.parse(localStorage.getItem('taskTable')) || [];
@@ -77,6 +82,7 @@ const newTask = () => {
     });
 
     localStorage.setItem('taskTable', JSON.stringify(taskTable));
+    displayTaskTable();
 }
 
 const displayTaskTable = () => {
@@ -149,7 +155,7 @@ const displayTaskTable = () => {
 const removeTask = (taskId) => {
     taskTable = taskTable.filter(i => i.taskId !== taskId);
     localStorage.setItem('taskTable', JSON.stringify(taskTable));
-    location.reload();
+    displayTaskTable();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
