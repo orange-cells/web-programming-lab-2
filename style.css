@@ -1,0 +1,143 @@
+body {
+    display: flex;
+    flex-direction: column;
+    background: #aab9fc;
+    min-height: 100vh;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+h1 {
+    color: white;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+}
+
+input[placeholder="Searching for..."] {
+    width: 70%;
+    max-width: 560px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: none;
+    padding: 12px 20px;
+}
+
+form {
+    background: #667eea;
+    padding: 10px;
+    border-radius: 15px;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    margin-bottom: 30px;
+    width: 80%;
+    max-width: 560px;
+}
+
+input[type="text"], input[type="date"] {
+    padding: 10px 10px;
+    border: none;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 250px;
+    min-width: 100px;
+}
+
+input[type="text"]:focus, input[type="date"]:focus {
+    border-color: #667eea;
+}
+
+button[type="submit"] {
+    background-color: #5b48bb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 10px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #897dc3;
+}
+
+table {
+    background: white;
+    width: 100%;
+    max-width: 800px;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+thead {
+    background-color: #5b48bb;
+    color: white;
+}
+
+th {
+    padding: 12px;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #edf2f7;
+    text-align: center;
+}
+
+tr:last-child td { border-bottom: none; }
+
+tr:nth-child(even) { background-color: #f7fafc; }
+
+tr input[type="checkbox"] {
+    appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #667eea;
+    border-radius: 0.25rem;
+    background-color: #fff;
+    cursor: pointer;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    margin: 0;
+}
+
+tr input[type="checkbox"]:checked {
+    background-color: #667eea;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+}
+
+tr button {
+    background-color: #667eea;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 5px 10px;
+    cursor: pointer;
+    align-items: center;
+}
+
+select {
+    background: #667eea;
+    color: white;
+    text-align: center;
+    border: none;
+    border-radius: 8px;
+    margin-top: 6px;
+    margin-left: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 400px) {
+    th, td {
+        font-size: 9px;
+        padding: 6px 5px;
+    }
+
+    input, button {
+        font-size: 12px;
+    }
+}
+

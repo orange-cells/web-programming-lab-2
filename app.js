@@ -48,6 +48,7 @@ const loadPage = () => {
         th.textContent = i;
 
         if (i.includes('due date')) {
+            th.textContent = 'due date ⇅';
             th.style.cursor = 'pointer';
             th.addEventListener('click', () => {
                 sortDate = !sortDate;
@@ -116,8 +117,8 @@ const displayTaskTable = () => {
         tasks.removeChild(tasks.firstChild);
     }
 
-    let tasksToDisplay = [...taskTable];  // делаем копию
-    if (sortDate) {  // пришлось немного поменять, иначе drag and drop работал только со смещением вниз
+    let tasksToDisplay = [...taskTable];
+    if (sortDate) {
         tasksToDisplay.sort((a, b) => {
             const dateA = a.taskDate ? new Date(a.taskDate) : new Date('9999-12-31');
             const dateB = b.taskDate ? new Date(b.taskDate) : new Date('9999-12-31');
@@ -180,6 +181,8 @@ const displayTaskTable = () => {
         drag.style.cursor = 'pointer';
 
         const status = document.createElement('td');
+
+        const tdCheck = document.createElement('td');
         const check = document.createElement('input');
         check.setAttribute('type', 'checkbox');
         check.checked = element.status;
@@ -189,6 +192,7 @@ const displayTaskTable = () => {
             displayTaskTable();
         });
         status.append(check)
+        tdCheck.append(check)
 
         const text = document.createElement('td');
         text.textContent = element.taskText;
@@ -221,10 +225,11 @@ const displayTaskTable = () => {
         const del = document.createElement('td');
         const delButton = document.createElement('button');
         delButton.textContent = '-';
+        del.append(delButton);
         
         delButton.addEventListener('click', () => removeTask(element.taskId));
 
-        task.append(drag, check, text, dueDate, status, delButton);
+        task.append(drag, tdCheck, text, dueDate, status, del);
         tasks.append(task);
     });
 }
