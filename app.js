@@ -1,5 +1,6 @@
-let sortDate = true;
+let sortDate = false;
 let currentStatus = 'all';
+let pickedTask = null;
 
 const loadPage = () => {
     // заголовок
@@ -39,7 +40,7 @@ const loadPage = () => {
     const thead = document.createElement('thead');
     const attrs = document.createElement('tr');
 
-    const tableHeaders = ['check', 'task', 'due date', 'status', 'delete'];
+    const tableHeaders = ['move', 'check', 'task', 'due date', 'status', 'delete'];
     tableHeaders.forEach(i => {
         const th = document.createElement('th');
         th.textContent = i;
@@ -48,7 +49,6 @@ const loadPage = () => {
             th.style.cursor = 'pointer';
             th.addEventListener('click', () => {
                 sortDate = !sortDate;
-                localStorage.setItem('taskTable', JSON.stringify(taskTable));
                 displayTaskTable();
             });
         }
@@ -114,19 +114,50 @@ const displayTaskTable = () => {
     }
 
     let tasksToDisplay = [...taskTable];  // делаем копию
-    tasksToDisplay.sort((a, b) => {
-        const dateA = a.taskDate ? new Date(a.taskDate) : new Date('9999-12-31');
-        const dateB = b.taskDate ? new Date(b.taskDate) : new Date('9999-12-31');
-        return sortDate ? dateA - dateB : dateB - dateA;
-    });
+    if (sortDate) {  // пришлось немного поменять, иначе drag and drop работал только со смещением вниз
+        tasksToDisplay.sort((a, b) => {
+            const dateA = a.taskDate ? new Date(a.taskDate) : new Date('9999-12-31');
+            const dateB = b.taskDate ? new Date(b.taskDate) : new Date('9999-12-31');
+            return dateA - dateB;
+        });
+    };
 
     if (currentStatus !== 'all') {
         const ifDone = currentStatus === 'done';
         tasksToDisplay = tasksToDisplay.filter(task => Boolean(task.status) === ifDone);
     }
 
-    tasksToDisplay.forEach(element => {
+    tasksToDisplay.forEach((element, index) => {
         const task = document.createElement('tr');
+        task.dataset.id = element.taskId;
+        task.draggable = true;
+        
+        task.addEventListener('dragstart', () => {
+            pickedTask = index;
+            task.classList.add('dragging');
+        });
+
+        task.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            task.classList.add('drag-over');
+        });
+
+        task.addEventListener('dragleave', () => {
+            task.classList.remove('drag-over');
+        });
+
+        task.addEventListener('drop', () => {
+            task.classList.remove('drag-over');
+            dragAndDrop(pickedTask, index);
+        });
+
+        task.addEventListener('dragend', () => {
+            task.classList.remove('dragging');
+        });
+
+        const drag = document.createElement('td');
+        drag.textContent = '⇅';
+        drag.style.cursor = 'pointer';
 
         const status = document.createElement('td');
         const check = document.createElement('input');
@@ -173,7 +204,7 @@ const displayTaskTable = () => {
         
         delButton.addEventListener('click', () => removeTask(element.taskId));
 
-        task.append(check, text, dueDate, status, delButton);
+        task.append(drag, check, text, dueDate, status, delButton);
         tasks.append(task);
     });
 }
@@ -184,9 +215,21 @@ const removeTask = (taskId) => {
     displayTaskTable();
 }
 
+const dragAndDrop = (startId, endId) => {
+    if (startId === endId || startId === null) return;
+    
+    const movedItem = taskTable.splice(startId, 1)[0];
+    taskTable.splice(endId, 0, movedItem);
+    
+    sortDate = false;
+    
+    localStorage.setItem('taskTable', JSON.stringify(taskTable));
+    displayTaskTable();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // localStorage.clear()
-    console.log(localStorage);
+    // console.log(taskTable, sortDate);
     loadPage();
     displayTaskTable();
 });
