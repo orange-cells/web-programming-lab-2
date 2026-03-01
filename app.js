@@ -155,6 +155,19 @@ const displayTaskTable = () => {
             task.classList.remove('dragging');
         });
 
+        task.ontouchstart = () => {
+            startId = taskTable.findIndex(t => t.taskId === element.taskId);
+        };
+
+        task.ontouchend = (e) => {
+            const touch = e.changedTouches[0];
+            const target = document.elementFromPoint(touch.clientX, touch.clientY).closest('tr');
+            if (target) {
+                const endId = taskTable.findIndex(t => t.taskId == target.dataset.id);
+                dragAndDrop(startId, endId);
+            }
+        };
+
         const drag = document.createElement('td');
         drag.textContent = '⇅';
         drag.style.cursor = 'pointer';
