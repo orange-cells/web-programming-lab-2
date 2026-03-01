@@ -16,7 +16,9 @@ const loadPage = () => {
     // поиск задач
     const search = document.createElement('input');
     search.setAttribute('placeholder', 'Searching for...');
+    search.setAttribute('id', 'searchField');
     document.querySelector('body').append(search);
+    search.addEventListener('input', () => displayTaskTable());
 
     // создание задачи
     const taskTable = document.createElement('form');
@@ -108,6 +110,7 @@ const newTask = () => {
 
 const displayTaskTable = () => {
     const tasks = document.getElementById('todo-body');
+    const searchValue = document.getElementById('searchField').value.toLowerCase();
 
     while (tasks.firstChild) {
         tasks.removeChild(tasks.firstChild);
@@ -125,6 +128,10 @@ const displayTaskTable = () => {
     if (currentStatus !== 'all') {
         const ifDone = currentStatus === 'done';
         tasksToDisplay = tasksToDisplay.filter(task => Boolean(task.status) === ifDone);
+    }
+
+    if (searchValue) {
+        tasksToDisplay = tasksToDisplay.filter(task => task.taskText.toLowerCase().includes(searchValue));
     }
 
     tasksToDisplay.forEach((element, index) => {
@@ -241,8 +248,6 @@ const dragAndDrop = (startId, endId) => {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // localStorage.clear()
-    // console.log(taskTable, sortDate);
     loadPage();
     displayTaskTable();
 });
